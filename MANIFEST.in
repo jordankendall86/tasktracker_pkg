@@ -1,0 +1,2 @@
+include src/tasktracker/.config.json
+recursive-include src/tasktracker/task_data *.json
