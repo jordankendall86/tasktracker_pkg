@@ -36,10 +36,10 @@ tasktracker_pkg/
 └── tests/
 ```
 
-## Install
+## Clone the repository
 
 ```bash
-pip install .
+git clone https://github.com/jordankendall86/tasktracker_pkg
 ```
 
 ## Example script
