@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tasktracker"
-version = "0.9.2"
+version = "0.9.3"
 description = "A simple realistic Python task tracking package with CLI support"
 readme = "README.md"
 requires-python = ">=3.8"

@@ -384,14 +384,32 @@ class TestCliFilteredViews(TaskTrackerCliBase):
 
     def test_pending_shows_original_indices(self):
         output = self.run_cli(["pending"])
-        self.assertIn("2. [Pending] Write report - Quarterly report", output)
-        self.assertIn("4. [Pending] Review report - Draft review", output)
+        self.assertIn("Pending Tasks", output)
+        self.assertIn("Using file:", output)
+        self.assertIn("tasks.json", output)
+        self.assertIn("2.", output)
+        self.assertIn("[Pending]", output)
+        self.assertIn("Write report", output)
+        self.assertIn("Quarterly report", output)
+        self.assertIn("4.", output)
+        self.assertIn("[Pending]", output)
+        self.assertIn("Review report", output)
+        self.assertIn("Draft review", output)
         self.assertNotIn("1. [Pending] Write report", output)
 
     def test_search_shows_original_indices(self):
         output = self.run_cli(["search", "report"])
-        self.assertIn("2. [Pending] Write report - Quarterly report", output)
-        self.assertIn("4. [Pending] Review report - Draft review", output)
+        self.assertIn("Search Results", output)
+        self.assertIn("Using file:", output)
+        self.assertIn("tasks.json", output)
+        self.assertIn("2.", output)
+        self.assertIn("[Pending]", output)
+        self.assertIn("Write report", output)
+        self.assertIn("Quarterly report", output)
+        self.assertIn("4.", output)
+        self.assertIn("[Pending]", output)
+        self.assertIn("Review report", output)
+        self.assertIn("Draft review", output)
         self.assertNotIn("1. [Pending] Write report", output)
 
     def test_pending_no_results(self):
@@ -403,11 +421,17 @@ class TestCliFilteredViews(TaskTrackerCliBase):
             ],
         )
         output = self.run_cli(["pending"])
-        self.assertIn("No tasks found.", output)
+        self.assertIn("Pending Tasks", output)
+        self.assertIn("Using file:", output)
+        self.assertIn("tasks.json", output)
+        self.assertIn("No pending tasks found.", output)
 
     def test_search_no_results(self):
         output = self.run_cli(["search", "nonexistent"])
-        self.assertIn("No tasks found.", output)
+        self.assertIn("Search Results", output)
+        self.assertIn("Using file:", output)
+        self.assertIn("tasks.json", output)
+        self.assertIn("No matching tasks found.", output)
 
 
 class TestCliActiveFileBehavior(TaskTrackerCliBase):

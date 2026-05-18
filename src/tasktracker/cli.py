@@ -150,13 +150,11 @@ def print_tasks(tasks):
 
 def print_indexed_tasks(indexed_tasks):
     if not indexed_tasks:
-        print("No tasks found.")
+        print(color_text("No tasks found.", Fore.YELLOW))
         return
 
     for index, task in indexed_tasks:
-        status = color_text('[Done]', Fore.GREEN) if task.completed else color_text('[Pending]', Fore.YELLOW)
-        description = f" - {task.description}" if task.description else ""
-        print(f"{index}. {status} {task.title}{description}")
+        print(format_task_line(index, task))
 
 
 def print_blank_line() -> None:
@@ -260,14 +258,36 @@ def cmd_remove(args):
 
 def cmd_pending(args):
     manager, _, active_file, _ = load_manager(args.file)
+
+    print_section("Pending Tasks", Fore.CYAN)
     print(f"Using file: {active_file}")
-    print_indexed_tasks(manager.get_pending_tasks_with_indices())
+    print_blank_line()
+
+    indexed_tasks = manager.get_pending_tasks_with_indices()
+    if not indexed_tasks:
+        print(color_text("No pending tasks found.", Fore.YELLOW))
+        print_blank_line()
+        return
+
+    print_indexed_tasks(indexed_tasks)
+    print_blank_line()
 
 
 def cmd_search(args):
     manager, _, active_file, _ = load_manager(args.file)
+
+    print_section("Search Results", Fore.CYAN)
     print(f"Using file: {active_file}")
-    print_indexed_tasks(manager.search_tasks_with_indices(args.keyword))
+    print_blank_line()
+
+    indexed_tasks = manager.search_tasks_with_indices(args.keyword)
+    if not indexed_tasks:
+        print(color_text("No matching tasks found.", Fore.YELLOW))
+        print_blank_line()
+        return
+
+    print_indexed_tasks(indexed_tasks)
+    print_blank_line()
 
 
 def cmd_update(args):

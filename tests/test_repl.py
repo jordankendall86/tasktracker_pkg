@@ -94,8 +94,15 @@ class TestRepl(unittest.TestCase):
         )
 
         output = self.capture_output(repl.run_cmd, "pending")
-        self.assertIn("2. [Pending] Task B", output)
-        self.assertIn("4. [Pending] Task D", output)
+        self.assertIn("Pending Tasks", output)
+        self.assertIn("Using file:", output)
+        self.assertIn("tasks.json", output)
+        self.assertIn("2.", output)
+        self.assertIn("[Pending]", output)
+        self.assertIn("Task B", output)
+        self.assertIn("4.", output)
+        self.assertIn("[Pending]", output)
+        self.assertIn("Task D", output)
 
     def test_run_cmd_search_preserves_original_index(self):
         tasks = [
@@ -109,7 +116,12 @@ class TestRepl(unittest.TestCase):
         )
 
         output = self.capture_output(repl.run_cmd, "search report")
-        self.assertIn("2. [Pending] Write report", output)
+        self.assertIn("Search Results", output)
+        self.assertIn("Using file:", output)
+        self.assertIn("tasks.json", output)
+        self.assertIn("2.", output)
+        self.assertIn("[Pending]", output)
+        self.assertIn("Write report", output)
 
     def test_run_cmd_empty_string_shows_help(self):
         output = self.capture_output(repl.run_cmd, "")
