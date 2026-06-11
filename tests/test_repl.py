@@ -18,17 +18,19 @@ class TestRepl(unittest.TestCase):
         self.addCleanup(self.tmpdir.cleanup)
 
         self.project_dir = Path(self.tmpdir.name)
-        self.module_dir = self.project_dir / "src" / "tasktracker"
-        self.module_dir.mkdir(parents=True)
 
-        self.task_data_dir = self.module_dir / "task_data"
+        # Simulate ~/.tasktracker
+        self.user_data_dir = self.project_dir / ".tasktracker"
+        self.user_data_dir.mkdir(parents=True)
+
+        self.task_data_dir = self.user_data_dir / "task_data"
         self.task_data_dir.mkdir(parents=True)
 
-        self.config_file = self.module_dir / ".config.json"
+        self.config_file = self.user_data_dir / "config.json"
 
         patchers = [
+            patch.object(cli, "get_user_data_dir", return_value=self.user_data_dir),
             patch.object(cli, "get_task_data_dir", return_value=self.task_data_dir),
-            patch.object(cli, "get_module_dir", return_value=self.module_dir),
             patch.object(cli, "get_config_file", return_value=self.config_file),
         ]
 

@@ -31,8 +31,8 @@ tasktracker_pkg/
 │       ├── models.py
 │       ├── repl.py
 │       ├── storage.py
-│       └── task_data/
-│           └── tasks.json
+│       └── task_data_example/
+│           └── tasks_example.json
 └── tests/
 ```
 
@@ -55,7 +55,7 @@ for task in manager.list_tasks():
     print(task)
 ```
 
-## Example repl
+## Example repl (First run python command)
 ```Option 1:
 from tasktracker.repl import start_repl
 start_repl()
@@ -87,7 +87,7 @@ python -m unittest tests.test_tasktracker
 python -m unittest tests.test_repl
 
 Example task_data_path_override input in .config.json:
-"C:\\Users\\p3051624\\OneDrive - Charter Communications\\Documents\\Python\\tasktracker_pkg\\tests\\task_data"
+"C:\\Users\\[windows user name]\\.tasktracker\\task_data"
 ```
 
 ## Developer Notes

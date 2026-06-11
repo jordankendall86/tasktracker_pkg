@@ -22,8 +22,5 @@ tasktracker = "tasktracker.cli:main"
 package-dir = {"" = "src"}
 include-package-data = true
 
-[tool.setuptools.package-data]
-tasktracker = [".config.json", "task_data/*.json"]
-
 [tool.setuptools.packages.find]
 where = ["src"]

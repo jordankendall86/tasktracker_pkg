@@ -27,8 +27,11 @@ def color_text(text: str, color: str) -> str:
     return f"{color}{text}{Style.RESET_ALL}"
 
 
-def get_installed_package_dir() -> Path:
-    return Path(__file__).resolve().parent
+def get_user_data_dir() -> Path:
+    """Return ~/.tasktracker, create it if needed."""
+    user_dir = Path.home() / ".tasktracker"
+    user_dir.mkdir(exist_ok=True)
+    return user_dir
 
 
 def get_task_data_dir() -> Path:
@@ -42,7 +45,9 @@ def get_task_data_dir() -> Path:
         except OSError:
             pass
 
-    return (get_module_dir() / "task_data").resolve()
+    task_data_dir = get_user_data_dir() / "task_data"
+    task_data_dir.mkdir(exist_ok=True)
+    return task_data_dir.resolve()
 
 
 def get_module_dir() -> Path:
@@ -50,7 +55,7 @@ def get_module_dir() -> Path:
 
 
 def get_config_file() -> Path:
-    return get_module_dir() / ".config.json"
+    return get_user_data_dir() / "config.json"
 
 
 def load_config() -> dict:
@@ -99,13 +104,9 @@ def resolve_task_file_path(file_name: str | None) -> Path:
 
 
 def validate_required_paths() -> None:
-    module_dir = get_module_dir()
+    # task_data_dir is created on demand by get_task_data_dir(); this check
+    # catches the case where an explicit override path has gone missing.
     task_data_dir = get_task_data_dir()
-
-    if not module_dir.exists():
-        raise FileNotFoundError(
-            f"Tasktracker module directory does not exist: {module_dir}"
-        )
 
     if not task_data_dir.exists():
         raise FileNotFoundError(

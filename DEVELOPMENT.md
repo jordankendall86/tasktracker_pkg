@@ -71,8 +71,8 @@ tasktracker_pkg/
 │       ├── repl.py
 │       ├── storage.py
 │       ├── .config.json
-│       └── task_data/
-│           └── tasks.json
+│       └── task_data_example/
+│           └── tasks_example.json
 └── tests/
     ├── __main__.py
     ├── test_repl.py
@@ -86,12 +86,12 @@ tasktracker_pkg/
 src/tasktracker/.config.json
 ~~~
 
-#### Default task data directory
+#### Task data directory
 ~~~text
-src/tasktracker/task_data/
+C:/Users/[Windows User Name]/.tasktracker/task_data
 ~~~
 
-When installed locally, these move under the installed package directory in `site-packages`.
+The defualt json file created is tasks.json
 
 ---
 
@@ -150,7 +150,7 @@ This avoids circular path resolution.
 Task data normally lives under:
 
 ~~~text
-<module_dir>/task_data
+C:/Users/[Windows User Name]/.tasktracker/task_data
 ~~~
 
 but may be overridden by:
@@ -201,7 +201,7 @@ If valid, that directory is used.
 If invalid, tasktracker falls back to:
 
 ~~~text
-<module_dir>/task_data
+C:/Users/[Windows User Name]/.tasktracker/task_data
 ~~~
 
 ---

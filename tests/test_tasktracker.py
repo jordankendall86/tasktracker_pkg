@@ -1,7 +1,6 @@
 import io
 import json
 import unittest
-import shutil
 from contextlib import redirect_stdout
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -192,27 +191,29 @@ class TaskTrackerCliBase(unittest.TestCase):
         self.addCleanup(self.tmpdir.cleanup)
 
         self.project_dir = Path(self.tmpdir.name)
-        self.module_dir = self.project_dir / "src" / "tasktracker"
-        self.module_dir.mkdir(parents=True)
 
-        self.task_data_dir = self.module_dir / "task_data"
+        # Simulate ~/.tasktracker
+        self.user_data_dir = self.project_dir / ".tasktracker"
+        self.user_data_dir.mkdir(parents=True)
+
+        self.task_data_dir = self.user_data_dir / "task_data"
         self.task_data_dir.mkdir(parents=True)
 
-        self.config_file = self.module_dir / ".config.json"
+        self.config_file = self.user_data_dir / "config.json"
 
+        self.get_user_data_dir_patcher = patch.object(
+            cli, "get_user_data_dir", return_value=self.user_data_dir
+        )
         self.get_task_data_dir_patcher = patch.object(
             cli, "get_task_data_dir", return_value=self.task_data_dir
-        )
-        self.get_module_dir_patcher = patch.object(
-            cli, "get_module_dir", return_value=self.module_dir
         )
         self.get_config_file_patcher = patch.object(
             cli, "get_config_file", return_value=self.config_file
         )
 
         self._patchers = [
+            self.get_user_data_dir_patcher,
             self.get_task_data_dir_patcher,
-            self.get_module_dir_patcher,
             self.get_config_file_patcher,
         ]
 
@@ -552,18 +553,26 @@ class TestCliPathValidation(TaskTrackerCliBase):
         self.assertIn("Error: file does not exist at path:", output)
 
     def test_current_errors_when_task_data_dir_missing(self):
-        shutil.rmtree(self.module_dir)
+        # Simulate an override path that no longer exists so the resolved
+        # task_data_dir is invalid and validate_required_paths() raises.
+        missing_dir = self.project_dir / "gone"
+        config = {"task_data_path_override": str(missing_dir)}
+        self.config_file.write_text(json.dumps(config), encoding="utf-8")
 
-        output = self.run_cli(["current"])
+        with patch.object(cli, "get_task_data_dir", return_value=missing_dir):
+            output = self.run_cli(["current"])
+
         self.assertIn("Error:", output)
-        self.assertIn("Tasktracker module directory does not exist", output)
+        self.assertIn("Task data directory does not exist", output)
 
 
 class TestCliTaskDataPathOverride(TaskTrackerCliBase):
     def setUp(self):
         super().setUp()
 
-        # Use the real get_task_data_dir() implementation in this class.
+        # Unpatch get_task_data_dir so its real logic is exercised.
+        # get_user_data_dir stays patched to keep the default pointing at the
+        # temp directory instead of the real ~/.tasktracker.
         self.get_task_data_dir_patcher.stop()
 
     def test_get_task_data_dir_uses_task_data_path_override(self):
@@ -596,7 +605,7 @@ class TestCliTaskDataPathOverride(TaskTrackerCliBase):
 
         self.assertEqual(
             cli.get_task_data_dir(),
-            (self.module_dir / "task_data").resolve(),
+            (self.user_data_dir / "task_data").resolve(),
         )
 
     def test_get_task_data_dir_defaults_when_override_path_is_invalid(self):
@@ -615,7 +624,7 @@ class TestCliTaskDataPathOverride(TaskTrackerCliBase):
 
         self.assertEqual(
             cli.get_task_data_dir(),
-            (self.module_dir / "task_data").resolve(),
+            (self.user_data_dir / "task_data").resolve(),
         )
 
     def test_setpath_saves_task_data_path_override(self):
