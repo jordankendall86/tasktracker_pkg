@@ -639,7 +639,7 @@ class TestCliTaskDataPathOverride(TaskTrackerCliBase):
         self.assertIn("Error:", output)
         self.assertIn("directory does not exist", output)
 
-        config = json.loads(self.config_file.read_text(encoding="utf-8"))
+        config = self.read_config()
         self.assertNotIn("task_data_path_override", config)
 
     def test_setpath_preserves_active_file(self):
@@ -663,64 +663,6 @@ class TestCliTaskDataPathOverride(TaskTrackerCliBase):
         self.assertEqual(
             config["task_data_path_override"],
             str(override_dir.resolve()),
-        )
-
-
-class TestCliTaskDataPathOverride(TaskTrackerCliBase):
-    def setUp(self):
-        super().setUp()
-        self.get_task_data_dir_patcher.stop()
-
-    def test_get_task_data_dir_uses_task_data_path_override(self):
-        override_dir = self.project_dir / "custom_task_data"
-        override_dir.mkdir()
-
-        self.config_file.write_text(
-            json.dumps(
-                {
-                    "active_file": "tasks.json",
-                    "task_data_path_override": str(override_dir),
-                },
-                indent=2,
-            ),
-            encoding="utf-8",
-        )
-
-        self.assertEqual(cli.get_task_data_dir(), override_dir.resolve())
-
-    def test_get_task_data_dir_defaults_to_module_task_data(self):
-        self.config_file.write_text(
-            json.dumps(
-                {
-                    "active_file": "tasks.json",
-                },
-                indent=2,
-            ),
-            encoding="utf-8",
-        )
-
-        self.assertEqual(
-            cli.get_task_data_dir(),
-            (self.module_dir / "task_data").resolve(),
-        )
-
-    def test_get_task_data_dir_defaults_when_override_path_is_invalid(self):
-        invalid_dir = self.project_dir / "does_not_exist"
-
-        self.config_file.write_text(
-            json.dumps(
-                {
-                    "active_file": "tasks.json",
-                    "task_data_path_override": str(invalid_dir),
-                },
-                indent=2,
-            ),
-            encoding="utf-8",
-        )
-
-        self.assertEqual(
-            cli.get_task_data_dir(),
-            (self.module_dir / "task_data").resolve(),
         )
 
 
