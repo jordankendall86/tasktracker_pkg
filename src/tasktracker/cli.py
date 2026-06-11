@@ -242,7 +242,7 @@ def cmd_complete(args):
         print(f"Completed task: {task.title}")
         print(f"Using file: {active_file}")
     except IndexError:
-        print(f"{color_text("Error:", Fore.RED)} invalid task number.")
+        print(color_text("Error:", Fore.RED) + " invalid task number.")
 
 
 def cmd_remove(args):
@@ -253,7 +253,7 @@ def cmd_remove(args):
         print(f"Removed task: {task.title}")
         print(f"Using file: {active_file}")
     except IndexError:
-        print(f"{color_text("Error:", Fore.RED)} invalid task number.")
+        print(color_text("Error:", Fore.RED) + " invalid task number.")
 
 
 def cmd_pending(args):
@@ -310,7 +310,7 @@ def cmd_update(args):
         print(f"Updated task: {task.title}")
         print(f"Using file: {active_file}")
     except IndexError:
-        print(f"{color_text("Error:", Fore.RED)} invalid task number.")
+        print(color_text("Error:", Fore.RED) + " invalid task number.")
 
 
 def format_file_size(size: int) -> str:
@@ -566,4 +566,4 @@ def main(argv=None):
     try:
         args.func(args)
     except FileNotFoundError as e:
-        print(f"{color_text("Error:", Fore.RED)} {e}")
+        print(color_text("Error:", Fore.RED) + f" {e}")

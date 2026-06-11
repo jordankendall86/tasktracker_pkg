@@ -50,7 +50,7 @@ def start_repl() -> None:
                 os.chdir(new_dir)
                 print(f"Changed directory to: {Path.cwd()}")
             except FileNotFoundError:
-                print(f"{color_text("Error:", Fore.RED)} directory does not exist: {new_dir}")
+                print(color_text("Error:", Fore.RED) + f" directory does not exist: {new_dir}")
             continue
 
         if not command:
