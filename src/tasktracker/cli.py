@@ -390,24 +390,22 @@ def cmd_use(args):
 def cmd_current(args):
     try:
         config = load_config()
-        saved_file = get_saved_active_file()
         effective_file = resolve_active_file(args.file)
         resolved_path = resolve_task_file_path(args.file)
         task_data_path_override = config.get("task_data_path_override")
         task_data_dir = get_task_data_dir()
 
-        print(f"{color_text('Saved active task file:', Fore.CYAN)} {saved_file}")
-        print(f"{color_text('Using file:', Fore.BLUE)} {effective_file}")
-        print(f"{color_text('Resolved path:', Fore.BLUE)} {resolved_path}")
+        print(f"{color_text('Using task file:', Fore.BLUE)} {effective_file}")
+        print(f"{color_text('Path to task file:', Fore.BLUE)} {resolved_path}")
         print(f"{color_text('Task data path override:', Fore.MAGENTA)} {task_data_path_override}")
-        print(f"{color_text('Task data directory:', Fore.MAGENTA)} {task_data_dir}")
+        print(f"{color_text('Task data folder path:', Fore.MAGENTA)} {task_data_dir}")
 
         if task_data_path_override:
             override_path = Path(task_data_path_override).expanduser()
             if not override_path.exists():
                 print(f"{color_text('Warning:', Fore.YELLOW)} override path is invalid; using default task_data directory.")
 
-        print(f"{color_text('Config file:', Fore.MAGENTA)} {get_config_file()}")
+        print(f"{color_text('Config file path:', Fore.MAGENTA)} {get_config_file()}")
     except FileNotFoundError as e:
         print(f"{color_text('Error:', Fore.RED)} {e}")
 

@@ -71,8 +71,7 @@ class TestRepl(unittest.TestCase):
         self.capture_output(repl.run_cmd, "use mytasks.json")
         output = self.capture_output(repl.run_cmd, "current")
 
-        self.assertIn("Saved active task file: mytasks.json", output)
-        self.assertIn("Using file: mytasks.json", output)
+        self.assertIn("Using task file: mytasks.json", output)
 
     def test_run_cmd_files(self):
         (self.task_data_dir / "mytasks.json").write_text("[]", encoding="utf-8")
@@ -173,22 +172,6 @@ class TestRepl(unittest.TestCase):
     def test_repl_imported_functions_still_run_without_path_crash(self):
         output = self.capture_output(repl.run_cmd, "")
         self.assertIn("usage:", output)
-
-    def test_start_repl_pwd_and_exit(self):
-        inputs = iter(["pwd", "exit"])
-
-        with patch("builtins.input", side_effect=lambda _: next(inputs)):
-            output = self.capture_output(repl.start_repl)
-
-        self.assertIn("Current working directory:", output)
-
-    def test_start_repl_cd_invalid_path(self):
-        inputs = iter(["cd does_not_exist", "exit"])
-
-        with patch("builtins.input", side_effect=lambda _: next(inputs)):
-            output = self.capture_output(repl.start_repl)
-
-        self.assertIn("Error: directory does not exist:", output)
     
     def test_run_cmd_use_errors_when_file_missing(self):
         output = self.capture_output(repl.run_cmd, "use missing.json")

@@ -463,8 +463,7 @@ class TestCliActiveFileBehavior(TaskTrackerCliBase):
         self.run_cli(["use", "mytasks.json"])
         output = self.run_cli(["current"])
 
-        self.assertIn("Saved active task file: mytasks.json", output)
-        self.assertIn("Using file: mytasks.json", output)
+        self.assertIn("Using task file: mytasks.json", output)
 
     def test_add_uses_saved_active_file(self):
         self.write_task_file("mytasks.json", [])
@@ -507,8 +506,7 @@ class TestCliActiveFileBehavior(TaskTrackerCliBase):
         self.run_cli(["use", "mytasks.json"])
         output = self.run_cli(["--file", "other.json", "current"])
 
-        self.assertIn("Saved active task file: mytasks.json", output)
-        self.assertIn("Using file: other.json", output)
+        self.assertIn("Using task file: other.json", output)
 
     def test_files_uses_task_data_dir_by_default(self):
         self.write_task_file(
