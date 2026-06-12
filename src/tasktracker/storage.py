@@ -1,4 +1,6 @@
 import json
+import os
+import tempfile
 from pathlib import Path
 from typing import List
 from .models import Task
@@ -10,7 +12,23 @@ class JsonStorage:
 
     def save(self, tasks: List[Task]) -> None:
         data = [task.to_dict() for task in tasks]
-        self.file_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        payload = json.dumps(data, indent=2)
+
+        # Write to a temp file in the same directory, then atomically replace
+        # the target so a crash mid-write never leaves a partial/corrupt file.
+        dir_ = self.file_path.parent
+        fd, tmp_path = tempfile.mkstemp(dir=dir_, suffix=".tmp")
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
+                f.write(payload)
+            os.replace(tmp_path, self.file_path)
+        except Exception:
+            # Clean up the temp file if anything goes wrong before the replace.
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+            raise
 
     def load(self) -> List[Task]:
         if not self.file_path.exists():
