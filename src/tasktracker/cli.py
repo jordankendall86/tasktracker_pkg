@@ -566,5 +566,5 @@ def main(argv=None):
 
     try:
         args.func(args)
-    except FileNotFoundError as e:
+    except (FileNotFoundError, ValueError) as e:
         print(color_text("Error:", Fore.RED) + f" {e}")

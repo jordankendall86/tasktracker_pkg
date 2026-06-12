@@ -182,6 +182,17 @@ class TestJsonStorage(unittest.TestCase):
             loaded = storage.load()
             self.assertEqual(loaded, [])
 
+    def test_load_corrupted_json_raises_value_error(self):
+        with TemporaryDirectory() as tmpdir:
+            file_path = Path(tmpdir) / "tasks.json"
+            file_path.write_text("this is not valid json{{{", encoding="utf-8")
+            storage = JsonStorage(str(file_path))
+
+            with self.assertRaises(ValueError) as ctx:
+                storage.load()
+
+            self.assertIn(str(file_path), str(ctx.exception))
+
 
 class TaskTrackerCliBase(unittest.TestCase):
     def setUp(self):

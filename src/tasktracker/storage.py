@@ -34,5 +34,16 @@ class JsonStorage:
         if not self.file_path.exists():
             return []
 
-        data = json.loads(self.file_path.read_text(encoding="utf-8"))
+        try:
+            text = self.file_path.read_text(encoding="utf-8")
+        except OSError as e:
+            raise OSError(f"Could not read task file '{self.file_path}': {e}") from e
+
+        try:
+            data = json.loads(text)
+        except json.JSONDecodeError as e:
+            raise ValueError(
+                f"Task file '{self.file_path}' contains invalid JSON: {e}"
+            ) from e
+
         return [Task.from_dict(item) for item in data]
